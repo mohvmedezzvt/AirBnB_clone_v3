@@ -67,22 +67,39 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+    def test_get_invalid_class(self):
+        """Test get with an invalid class"""
+        obj = BaseModel()
+        self.storage.new(obj)
+        self.storage.save()
+        retrieved_obj = self.storage.get("InvalidClass", obj.id)
+        self.assertIsNone(retrieved_obj)
 
-class TestFileStorage(unittest.TestCase):
-    """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
-        self.assertIs(type(models.storage.all()), dict)
+    def test_get_invalid_class_and_id(self):
+        """Test get with an invalid class and ID"""
+        obj = BaseModel()
+        self.storage.new(obj)
+        self.storage.save()
+        retrieved_obj = self.storage.get("InvalidClass", "invalid_id")
+        self.assertIsNone(retrieved_obj)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
-        """Test that all returns all rows when no class is passed"""
+    def test_count_empty_storage(self):
+        """Test count with an empty storage"""
+        count = self.storage.count()
+        self.assertEqual(count, 0)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_new(self):
-        """test that new adds an object to the database"""
+    def test_count_specific_class_empty_storage(self):
+        """Test count with an empty storage and specifying a class"""
+        count = self.storage.count("State")
+        self.assertEqual(count, 0)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
+    def test_get_nonexistent_object(self):
+        """Test get with a nonexistent object"""
+        obj_id = "nonexistent_id"
+        retrieved_obj = self.storage.get("BaseModel", obj_id)
+        self.assertIsNone(retrieved_obj)
+
+    def test_count_specific_class_nonexistent_objects(self):
+        """Test count with specifying a class and nonexistent objects"""
+        count = self.storage.count("State")
+        self.assertEqual(count, 0)
