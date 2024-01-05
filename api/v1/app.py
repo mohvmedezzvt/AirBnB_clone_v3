@@ -1,20 +1,20 @@
 #!/usr/bin/python3
-""" Flask app """
+""" Main file of the API """
+import os
 from flask import Flask
 from models import storage
 from api.v1.views import app_views
-import os
-from flask_cors import CORS
 
+
+# creating a Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
+
 
 app.register_blueprint(app_views, url_prefix="/api/v1")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    """ 404 page not found """
     return {"error": "Not found"}, 404
 
 
@@ -25,8 +25,7 @@ def page_not_found(e):
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
-    """ Teardown """
+def close(self):
     storage.close()
 
 
