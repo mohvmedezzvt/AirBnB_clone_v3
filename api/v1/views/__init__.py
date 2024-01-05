@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" Index objects that handles all default RestFul API actions"""
 from flask import Blueprint
 from api.v1.views.index import *
 
