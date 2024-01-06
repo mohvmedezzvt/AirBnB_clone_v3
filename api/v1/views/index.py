@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """ Index objects that handles all default RestFul API actions"""
+from flask import jsonify
 from api.v1.views import app_views
+from models import storage
 
 
-@app_views.route("/status", strict_slashes=False, methods=["GET"])
+@app_views.route("/status")
 def status():
     """ Return status """
-    return {
-        "status": "OK",
-    }
+    return jsonify({"status": "OK"}), 200
