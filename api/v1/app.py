@@ -12,10 +12,10 @@ app.url_map.strict_slashes = False
 app.register_blueprint(app_views)
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """ 404 error handler """
-    return {"error": "Not found"}, 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """ 404 error handler """
+#     return {"error": "Not found"}, 404
 
 
 @app.teardown_appcontext
