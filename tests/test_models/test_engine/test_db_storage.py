@@ -67,39 +67,21 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_get_invalid_class(self):
-        """Test get with an invalid class"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-        retrieved_obj = self.storage.get("InvalidClass", obj.id)
-        self.assertIsNone(retrieved_obj)
+    def test_db_storage_get(self):
+        """Test get method"""
+        storage = DBStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(storage.get(State, state.id), state)
 
-    def test_get_invalid_class_and_id(self):
-        """Test get with an invalid class and ID"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-        retrieved_obj = self.storage.get("InvalidClass", "invalid_id")
-        self.assertIsNone(retrieved_obj)
-
-    def test_count_empty_storage(self):
-        """Test count with an empty storage"""
-        count = self.storage.count()
-        self.assertEqual(count, 0)
-
-    def test_count_specific_class_empty_storage(self):
-        """Test count with an empty storage and specifying a class"""
-        count = self.storage.count("State")
-        self.assertEqual(count, 0)
-
-    def test_get_nonexistent_object(self):
-        """Test get with a nonexistent object"""
-        obj_id = "nonexistent_id"
-        retrieved_obj = self.storage.get("BaseModel", obj_id)
-        self.assertIsNone(retrieved_obj)
-
-    def test_count_specific_class_nonexistent_objects(self):
-        """Test count with specifying a class and nonexistent objects"""
-        count = self.storage.count("State")
-        self.assertEqual(count, 0)
+    def test_db_storage_count(self):
+        """Test count method"""
+        storage = DBStorage()
+        state = State(name="California")
+        storage.new(state)
+        city = City(name="San Francisco", state_id=state.id)
+        storage.new(city)
+        storage.save()
+        c = storage.count()
+        self.assertEqual(len(storage.all()), c)

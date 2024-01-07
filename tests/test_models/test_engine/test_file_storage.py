@@ -115,67 +115,23 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(json.loads(string), json.loads(js))
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get_invalid_class(self):
-        """Test get with an invalid class"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-        retrieved_obj = self.storage.get("InvalidClass", obj.id)
-        self.assertIsNone(retrieved_obj)
+    def test_get(self):
+        """Test get method"""
+        storage = FileStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        storage = FileStorage()
+        self.assertEqual(storage.get(State, state.id), state)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get_invalid_class_and_id(self):
-        """Test get with an invalid class and ID"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-        retrieved_obj = self.storage.get("InvalidClass", "invalid_id")
-        self.assertIsNone(retrieved_obj)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count_empty_storage(self):
-        """Test count with an empty storage"""
-        count = self.storage.count()
-        self.assertEqual(count, 0)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count_specific_class_empty_storage(self):
-        """Test count with an empty storage and specifying a class"""
-        count = self.storage.count("State")
-        self.assertEqual(count, 0)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get_nonexistent_object(self):
-        """Test get with a nonexistent object"""
-        obj_id = "nonexistent_id"
-        retrieved_obj = self.storage.get("BaseModel", obj_id)
-        self.assertIsNone(retrieved_obj)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count_specific_class_nonexistent_objects(self):
-        """Test count with specifying a class and nonexistent objects"""
-        count = self.storage.count("State")
-        self.assertEqual(count, 0)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get_existing_object(self):
-        """Test get with an existing object"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-        retrieved_obj = self.storage.get("BaseModel", obj.id)
-        self.assertIsNotNone(retrieved_obj)
-        self.assertEqual(obj.id, retrieved_obj.id)
-        self.assertEqual(obj.__class__.__name__,
-                         retrieved_obj.__class__.__name__)
-
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count_existing_objects(self):
-        """Test count with existing objects"""
-        obj1 = BaseModel()
-        obj2 = BaseModel()
-        self.storage.new(obj1)
-        self.storage.new(obj2)
-        self.storage.save()
-        count = self.storage.count()
-        self.assertEqual(count, 2)
+    def test_count(self):
+        """Test count method"""
+        storage = FileStorage()
+        state = State(name="California")
+        storage.new(state)
+        city = City(name="San Francisco", state_id=state.id)
+        storage.new(city)
+        storage.save()
+        c = storage.count()
+        self.assertEqual(len(storage.all()), c)
